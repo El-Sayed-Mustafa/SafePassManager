@@ -4,7 +4,7 @@ class AccountRepo(private val Dao: AccountDao)
 {
     val accounts = Dao.getAll()
 
-    suspend fun deleteAll(account: Account){
+    suspend fun deleteAll(){
         Dao.DeleteAll()
     }
     suspend fun insert(account:Account){
