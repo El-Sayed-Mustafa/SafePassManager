@@ -30,6 +30,12 @@ class MainActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
         initRecyclerView()
 
+        accountViewModel.statusMessage.observe(this, Observer {
+            it.getContentIfNotHandled()?.let {
+                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+            }
+        })
+
     }
 
     private fun initRecyclerView() {
@@ -40,7 +46,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun displayAccountsList() {
         accountViewModel.accounts.observe(this, Observer {
-            Log.i("MYTAG", it.toString())
             binding.accountRecyclerView.adapter = Adapter(it) { selectedItem: Account ->
                 listItemClicked(selectedItem)
             }
@@ -48,7 +53,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun listItemClicked(account: Account) {
-        Toast.makeText(this, "Selected name is ${account.siteName}", Toast.LENGTH_LONG).show()
         accountViewModel.initUpdateAndDelete(account)
     }
 

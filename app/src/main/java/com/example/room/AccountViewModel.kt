@@ -1,5 +1,6 @@
 package com.example.room
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,6 +22,10 @@ class AccountViewModel(private val repo: AccountRepo) : ViewModel() {
 
     val upsertButton = MutableLiveData<String>()
     val clearButton = MutableLiveData<String>()
+
+    private val _statusMessage =MutableLiveData<Event<String>>()
+    val statusMessage:LiveData<Event<String>>
+    get()=_statusMessage
 
     init {
         inputEmail.value = ""
@@ -61,6 +66,10 @@ class AccountViewModel(private val repo: AccountRepo) : ViewModel() {
 
     fun insert(account: Account) = viewModelScope.launch(Dispatchers.IO) {
         repo.insert(account)
+
+        withContext(Dispatchers.Main){
+            _statusMessage.value = Event("Account inserted successfully!")
+        }
     }
 
 
@@ -76,6 +85,8 @@ class AccountViewModel(private val repo: AccountRepo) : ViewModel() {
 
             upsertButton.value = "Save"
             clearButton.value = "Clear All"
+
+            _statusMessage.value = Event("Account updated successfully!")
 
         }
     }
@@ -93,11 +104,17 @@ class AccountViewModel(private val repo: AccountRepo) : ViewModel() {
             upsertButton.value = "Save"
             clearButton.value = "Clear All"
 
+            _statusMessage.value = Event("Account deleted successfully!")
+
         }
     }
 
     fun clearAll() = viewModelScope.launch(Dispatchers.IO) {
         repo.deleteAll()
+
+        withContext(Dispatchers.Main){
+            _statusMessage.value = Event("Accounts deleted successfully!")
+        }
     }
 
     fun initUpdateAndDelete(account: Account) {
