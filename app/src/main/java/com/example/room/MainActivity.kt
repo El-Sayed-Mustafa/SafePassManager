@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
 
         accountViewModel.statusMessage.observe(this, Observer {
             it.getContentIfNotHandled()?.let {
-                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
             }
         })
 

@@ -23,9 +23,9 @@ class AccountViewModel(private val repo: AccountRepo) : ViewModel() {
     val upsertButton = MutableLiveData<String>()
     val clearButton = MutableLiveData<String>()
 
-    private val _statusMessage =MutableLiveData<Event<String>>()
-    val statusMessage:LiveData<Event<String>>
-    get()=_statusMessage
+    private val _statusMessage = MutableLiveData<Event<String>>()
+    val statusMessage: LiveData<Event<String>>
+        get() = _statusMessage
 
     init {
         inputEmail.value = ""
@@ -64,56 +64,72 @@ class AccountViewModel(private val repo: AccountRepo) : ViewModel() {
     }
 
 
-    fun insert(account: Account) = viewModelScope.launch(Dispatchers.IO) {
-        repo.insert(account)
+    private fun insert(account: Account) = viewModelScope.launch(Dispatchers.IO) {
+        val newRowId = repo.insert(account)
 
-        withContext(Dispatchers.Main){
-            _statusMessage.value = Event("Account inserted successfully!")
+        withContext(Dispatchers.Main) {
+            if (newRowId >= -1)
+                _statusMessage.value = Event("Account inserted successfully! $newRowId")
+            else
+                _statusMessage.value = Event("Error Occurred!")
+
         }
     }
 
 
-    fun update(account: Account) = viewModelScope.launch(Dispatchers.IO) {
-        repo.update(account)
+    private fun update(account: Account) = viewModelScope.launch(Dispatchers.IO) {
+        val numberOfRows = repo.update(account)
 
         withContext(Dispatchers.Main) {
-            inputName.value = ""
-            inputEmail.value = ""
-            inputPass.value = ""
 
-            isUpdateAndDelete = false
+            if (numberOfRows > 0) {
+                inputName.value = ""
+                inputEmail.value = ""
+                inputPass.value = ""
 
-            upsertButton.value = "Save"
-            clearButton.value = "Clear All"
+                isUpdateAndDelete = false
 
-            _statusMessage.value = Event("Account updated successfully!")
+                upsertButton.value = "Save"
+                clearButton.value = "Clear All"
 
+                _statusMessage.value = Event("$numberOfRows Rows updated successfully!")
+            } else {
+                _statusMessage.value = Event("Error Occurred")
+            }
         }
     }
 
-    fun delete(account: Account) = viewModelScope.launch(Dispatchers.IO) {
-        repo.delete(account)
+    private fun delete(account: Account) = viewModelScope.launch(Dispatchers.IO) {
+        val numberOfRows = repo.delete(account)
 
         withContext(Dispatchers.Main) {
-            inputName.value = ""
-            inputEmail.value = ""
-            inputPass.value = ""
+            if (numberOfRows > 0) {
+                inputName.value = ""
+                inputEmail.value = ""
+                inputPass.value = ""
 
-            isUpdateAndDelete = false
+                isUpdateAndDelete = false
 
-            upsertButton.value = "Save"
-            clearButton.value = "Clear All"
+                upsertButton.value = "Save"
+                clearButton.value = "Clear All"
 
-            _statusMessage.value = Event("Account deleted successfully!")
+                _statusMessage.value = Event("$numberOfRows Rows deleted successfully!")
+            } else
+                _statusMessage.value = Event("Error Occurred")
+
 
         }
     }
 
     fun clearAll() = viewModelScope.launch(Dispatchers.IO) {
-        repo.deleteAll()
+        val numberOfRows = repo.deleteAll()
 
-        withContext(Dispatchers.Main){
-            _statusMessage.value = Event("Accounts deleted successfully!")
+        withContext(Dispatchers.Main) {
+            if (numberOfRows > 0) {
+                _statusMessage.value = Event("$numberOfRows Rows deleted successfully!")
+            }else{
+                _statusMessage.value = Event("Error Occurred")
+            }
         }
     }
 

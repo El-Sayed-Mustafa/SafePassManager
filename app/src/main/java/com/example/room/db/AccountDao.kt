@@ -12,17 +12,17 @@ import androidx.room.Update
 interface AccountDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun InsertAccount(account: Account):Long
+    suspend fun InsertAccount(account: Account): Long
 
     @Update
-    suspend fun UpdateAccount(account: Account)
+    suspend fun UpdateAccount(account: Account): Int
 
     @Delete
-    suspend fun DeleteAccount(account: Account)
+    suspend fun DeleteAccount(account: Account): Int
 
     @Query("DELETE FROM account_table")
-    suspend fun DeleteAll()
+    suspend fun DeleteAll(): Int
 
     @Query("SELECT * FROM account_table")
-    fun getAll():LiveData<List<Account>>
+    fun getAll(): LiveData<List<Account>>
 }
