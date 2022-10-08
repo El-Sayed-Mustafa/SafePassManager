@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.room.databinding.ActivityMainBinding
 import com.example.room.db.AccountDatabase
 import com.example.room.db.AccountRepo
@@ -25,6 +26,12 @@ class MainActivity : AppCompatActivity() {
         binding.myViewModel = accountViewModel
 
         binding.lifecycleOwner = this
+        initRecyclerView()
+
+    }
+
+    private fun initRecyclerView(){
+        binding.accountRecyclerView.layoutManager = LinearLayoutManager(this)
         displayAccountsList()
 
     }
@@ -32,6 +39,7 @@ class MainActivity : AppCompatActivity() {
     private fun displayAccountsList(){
         accountViewModel.accounts.observe(this, Observer {
             Log.i("MYTAG",it.toString())
+            binding.accountRecyclerView.adapter = Adapter(it)
         })
     }
 
