@@ -20,7 +20,7 @@
             android:clickable="true"
             android:focusable="true"
             app:cardBackgroundColor="#323240"
-            app:cardCornerRadius="10dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="10dp">
 
             <LinearLayout
