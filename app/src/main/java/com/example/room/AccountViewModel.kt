@@ -28,9 +28,6 @@ class AccountViewModel(private val repo: AccountRepo) : ViewModel() {
         get() = _statusMessage
 
     init {
-        inputEmail.value = ""
-        inputPass.value = ""
-        inputName.value = ""
         upsertButton.value = "Save"
         clearButton.value = "Clear All"
     }
@@ -38,22 +35,34 @@ class AccountViewModel(private val repo: AccountRepo) : ViewModel() {
 
     fun Upsert() {
 
-        if (isUpdateAndDelete) {
-            accountToUpdateOrDelete.siteName = inputName.value!!
-            accountToUpdateOrDelete.email = inputEmail.value!!
-            accountToUpdateOrDelete.password = inputPass.value!!
-            update(accountToUpdateOrDelete)
-        } else {
-            val name = inputName.value!!
-            val email = inputEmail.value!!
-            val pass = inputPass.value!!
+        if (inputName.value==null)
+            _statusMessage.value = Event("Please Enter Website name")
 
-            insert(Account(0, name, email, pass))
+        else if (inputEmail.value==null)
+            _statusMessage.value = Event("Please Enter your Email")
 
-            inputEmail.value = ""
-            inputName.value = ""
-            inputPass.value = ""
+        else if (inputPass.value == null)
+            _statusMessage.value = Event("Please Enter your password")
+
+        else{
+            if (isUpdateAndDelete) {
+                accountToUpdateOrDelete.siteName = inputName.value!!
+                accountToUpdateOrDelete.email = inputEmail.value!!
+                accountToUpdateOrDelete.password = inputPass.value!!
+                update(accountToUpdateOrDelete)
+            } else {
+                val name = inputName.value!!
+                val email = inputEmail.value!!
+                val pass = inputPass.value!!
+
+                insert(Account(0, name, email, pass))
+
+                inputEmail.value = ""
+                inputName.value = ""
+                inputPass.value = ""
+            }
         }
+
     }
 
     fun Clear() {
